@@ -1,15 +1,31 @@
-from selenium.webdriver import Chrome
-from selenium.webdriver.chrome.service import Service
+from unittest import TestCase, main
+
+from tools import create_browser
 
 
-def test_main_page():
-    executable_path = 'driver/chromedriver.exe'
-    service = Service(executable_path=executable_path)
-    browser = Chrome(service=service)
-    url = 'http://127.0.0.1:8000/'
-    browser.get(url=url)
-    assert 'Django' in browser.page_source
+class NewVisitorTest(TestCase):
+    
+    def setUp(self) -> None:
+        self.browser = create_browser()
+    
+    def test_can_start_a_list_and_retrieve_it_later(self):
+        
+        url = 'http://127.0.0.1:8000/'
+        # Эдит слышала про крутое онлайн-приложение со списком неотложных дел. Она решает посетить его
+        self.browser.get(url=url)
+        # Она видит, что заголовок и шапка страницы говорят о списках неотложных дел.
+        assert 'To-Do' in self.browser.page_source
+        #  ей сразу предлагают ввести элемент списка
+        #  Она набирает в текстовом поле Купить павлиньи перья в качестве элемента списка
+        #  Текстовое поле по-прежнему приглашает ее добавить еще один элемент
+        #  Она вводит Сделатьб мушку из перьев
+        #  Страница снова обновляется и теперь показывает оба элеиента
+        #
+        #  Эдин интересно запомнит ли сайт ее список
+        #  Далее Она видит что выводится небольшой текст с пояснениеми Она посещает этот адресс список по прежнему там
+    
+        #  Удовлетворенная она снова ложится спать
 
 
 if __name__ == '__main__':
-    test_main_page()
+    main(warnings='ignore')
