@@ -9,9 +9,10 @@
 </style>
 <body>
 <h1>To-Do list</h1>
-<p>
+<form method="post">
     <input type="text" id="id_new_item" placeholder="Enter a to-do item"/>
-</p>
+    {% csrf_token %}
+</form>
 <br>
 
 <table id="id_list_table">

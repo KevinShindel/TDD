@@ -36,7 +36,7 @@ class NewVisitorTest(TestCase):
 
         # after page is reloaded, it contains: '1: Купить павлиньи перья'
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(1)
+        time.sleep(5)
 
         table = self.browser.find_element(by=By.ID, value='id_list_table')
         rows = table.find_elements(by=By.TAG_NAME, value='tr')

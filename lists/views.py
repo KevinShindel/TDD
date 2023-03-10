@@ -1,4 +1,4 @@
-
+from django.http import HttpResponse
 from django.shortcuts import render
 
 
@@ -7,4 +7,6 @@ from django.shortcuts import render
 #     return HttpResponse('<html><title>To-Do lists</title></html>')
 
 def home_page(request):
+    if request.method == 'POST':
+        return HttpResponse(request.POST['item_text'])
     return render(request, 'home.html')
