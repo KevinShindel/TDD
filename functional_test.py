@@ -33,15 +33,16 @@ class NewVisitorTest(TestCase):
 
         #  Она набирает в текстовом поле 'Купить павлиньи перья' в качестве элемента списка
         inputbox.send_keys('Купить павлиньи перья')
-
+        time.sleep(1)
         # after page is reloaded, it contains: '1: Купить павлиньи перья'
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(5)
+        time.sleep(1)
 
         table = self.browser.find_element(by=By.ID, value='id_list_table')
         rows = table.find_elements(by=By.TAG_NAME, value='tr')
         self.assertTrue(
-            any(row.text == '1: Купить павлиньи перья' for row in rows)
+            any(row.text == '1: Купить павлиньи перья' for row in rows),
+            table.text
         )
 
         #  Текстовое поле по-прежнему приглашает ее добавить еще один элемент
