@@ -13,8 +13,13 @@ class NewVisitorTest(TestCase):
         self.browser = create_browser()
 
     def tearDown(self) -> None:
+        self.browser.close()
         self.browser.quit()
-        # self.browser.close()
+
+    def check_row_for_list_table(self, row_text):
+        table = self.browser.find_element(by=By.ID, value='id_list_table')
+        rows = table.find_elements(by=By.TAG_NAME, value='tr')
+        self.assertIn(row_text, [row.text for row in rows])
     
     def test_can_start_a_list_and_retrieve_it_later(self):
         
@@ -38,18 +43,20 @@ class NewVisitorTest(TestCase):
         inputbox.send_keys(Keys.ENTER)
         time.sleep(1)
 
-        table = self.browser.find_element(by=By.ID, value='id_list_table')
-        rows = table.find_elements(by=By.TAG_NAME, value='tr')
-        self.assertTrue(
-            any(row.text == '1: Купить павлиньи перья' for row in rows),
-            table.text
-        )
+        self.check_row_for_list_table('1: Купить павлиньи перья')
+
+        inputbox = self.browser.find_element(by=By.ID, value='id_new_item')
 
         #  Текстовое поле по-прежнему приглашает ее добавить еще один элемент
         #  Она вводит Сделать мушку из павлиньи перьев
+        inputbox.send_keys('Сделать мушку из павлиньих перьев')
+        inputbox.send_keys(Keys.ENTER)
+        time.sleep(1)
 
         #  Страница снова обновляется и теперь показывает оба элеиента
-        #
+        self.check_row_for_list_table('1: Купить павлиньи перья')
+        self.check_row_for_list_table('2: Сделать мушку из павлиньих перьев')
+
         #  Эдин интересно запомнит ли сайт ее список
         #  Далее Она видит что выводится небольшой текст с пояснениеми Она посещает этот адресс список по прежнему там
     
