@@ -1,14 +1,18 @@
 import time
-from unittest import TestCase, main
+from unittest import main
 
+from django.test import LiveServerTestCase
 from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
 
 from tools import create_browser
 
 
-class NewVisitorTest(TestCase):
-    
+# use standart non-isolated db
+# class NewVisitorTest(TestCase):
+# use isolation db class
+class NewVisitorTest(LiveServerTestCase):
+
     def setUp(self) -> None:
         self.browser = create_browser()
 
@@ -20,17 +24,18 @@ class NewVisitorTest(TestCase):
         table = self.browser.find_element(by=By.ID, value='id_list_table')
         rows = table.find_elements(by=By.TAG_NAME, value='tr')
         self.assertIn(row_text, [row.text for row in rows])
-    
+
     def test_can_start_a_list_and_retrieve_it_later(self):
-        
         url = 'http://127.0.0.1:8000/'
         # Эдит слышала про крутое онлайн-приложение со списком неотложных дел. Она решает посетить его
-        self.browser.get(url=url)
+        # self.browser.get(url=url)
+        # use test class included url
+        self.browser.get(self.live_server_url)
 
         # Она видит, что заголовок и шапка страницы говорят о списках неотложных дел.
         self.assertIn('To-Do', self.browser.title)
         header_text = self.browser.find_element(by=By.TAG_NAME, value='h1')
-        self.assertIn('To-Do', header_text.text,)
+        self.assertIn('To-Do', header_text.text, )
 
         #  ей сразу предлагают ввести элемент списка
         inputbox = self.browser.find_element(by=By.ID, value='id_new_item')
@@ -59,7 +64,7 @@ class NewVisitorTest(TestCase):
 
         #  Эдин интересно запомнит ли сайт ее список
         #  Далее Она видит что выводится небольшой текст с пояснениеми Она посещает этот адресс список по прежнему там
-    
+
         #  Удовлетворенная она снова ложится спать
 
 
