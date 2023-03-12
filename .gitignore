@@ -1,4 +1,4 @@
 /db.sqlite3
-/driver/chromedriver.exe
+/driver/*
 .idea
 *__pycache__/*

@@ -9,3 +9,22 @@
 - module tests
 - cycle module test/code
 - refactoring
+
+<hr>
+
+## Test evaluation
+
+#### Run only module tests
+````shell
+./manage.py test
+````
+
+#### Run tests only for app lists
+````shell
+./manage.py test lists
+````
+
+#### Run only functional tests
+```shell
+./manage.py test functional_tests
+```
