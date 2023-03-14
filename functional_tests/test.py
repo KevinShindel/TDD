@@ -13,6 +13,9 @@ from tools import create_browser
 class NewVisitorTest(LiveServerTestCase):
 
     MAX_WAIT = 10
+    FIRST_MSG = 'Купить павлиньи перья'
+    SECOND_MSG = 'Сделать мушку из павлиньих перьев'
+    THIRD_MSG = 'Buy milk'
 
     def setUp(self) -> None:
         self.browser = create_browser()
@@ -20,6 +23,11 @@ class NewVisitorTest(LiveServerTestCase):
     def tearDown(self) -> None:
         self.browser.close()
         self.browser.quit()
+
+    def send_new_item(self, item_text):
+        input_box = self.browser.find_element(by=By.ID, value='id_new_item')
+        input_box.send_keys(item_text)
+        input_box.send_keys(Keys.ENTER)
 
     def wait_for_row_int_table(self, row_text):
         start_time = time.time()
@@ -58,28 +66,55 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertEqual(inputbox.get_attribute('placeholder'), 'Enter a to-do item')
 
         #  Она набирает в текстовом поле 'Купить павлиньи перья' в качестве элемента списка
-        inputbox.send_keys('Купить павлиньи перья')
+        self.send_new_item(self.FIRST_MSG)
 
-        # after page is reloaded, it contains: '1: Купить павлиньи перья'
-        inputbox.send_keys(Keys.ENTER)
-
-        self.wait_for_row_int_table('1: Купить павлиньи перья')
-
-        inputbox = self.browser.find_element(by=By.ID, value='id_new_item')
+        self.wait_for_row_int_table(f'1: {self.FIRST_MSG}')
 
         #  Текстовое поле по-прежнему приглашает ее добавить еще один элемент
         #  Она вводит Сделать мушку из павлиньи перьев
-        inputbox.send_keys('Сделать мушку из павлиньих перьев')
-        inputbox.send_keys(Keys.ENTER)
+        self.send_new_item(self.SECOND_MSG)
 
         #  Страница снова обновляется и теперь показывает оба элеиента
-        self.wait_for_row_int_table('1: Купить павлиньи перья')
-        self.wait_for_row_int_table('2: Сделать мушку из павлиньих перьев')
+        self.wait_for_row_int_table(f'1: {self.FIRST_MSG}')
+        self.wait_for_row_int_table(f'2: {self.SECOND_MSG}')
 
         #  Эдин интересно запомнит ли сайт ее список
         #  Далее Она видит что выводится небольшой текст с пояснениеми Она посещает этот адресс список по прежнему там
 
         #  Удовлетворенная она снова ложится спать
+
+    def test_multiple_users_can_start_lists_at_different_urls(self):
+        self.browser.get(self.live_server_url)
+        self.send_new_item(self.FIRST_MSG)
+
+        self.wait_for_row_int_table(row_text=f'1: {self.FIRST_MSG}')
+
+        edith_list_url = self.browser.current_url
+        self.assertRegex(edith_list_url, r'/lists/.+')
+
+        # new user Francis, enter at site
+        self.browser.quit()
+        self.browser = create_browser()
+        self.browser.get(self.live_server_url)
+        page_text = self.browser.find_element(by=By.TAG_NAME, value='body').text
+        self.assertNotIn(self.FIRST_MSG, page_text)
+        self.assertNotIn(self.SECOND_MSG, page_text)
+
+        # Francis begin new list, past new item
+        self.send_new_item(self.THIRD_MSG)
+        self.wait_for_row_int_table(f'1: {self.THIRD_MSG}')
+
+        # Francis for uniq url
+        francis_list_url = self.browser.current_url
+        self.assertRegex(francis_list_url, '/lists/.+')
+        self.assertNotEqual(francis_list_url, edith_list_url)
+
+        # Check again for list Edith
+        page_text = self.browser.find_element(by=By.TAG_NAME, value='body').text
+        self.assertNotIn(self.FIRST_MSG, page_text)
+        self.assertIn(self.THIRD_MSG, page_text)
+
+        # well done.
 
 
 if __name__ == '__main__':
