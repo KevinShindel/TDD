@@ -1,4 +1,4 @@
 /db.sqlite3
-/driver/*
+/tools/*
 .idea
 *__pycache__/*
