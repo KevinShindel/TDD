@@ -1,25 +1,14 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>To-Do lists</title>
-</head>
-<style>
-  h1 {color:red; align: center}
-  p {color:blue; width: 500px; margin: 0px auto; padding: 10px; background-color: gray; border-radius: 10px}
-</style>
-<body>
+{% extends 'base.html' %}
 
-<h1>Your To-Do list</h1>
-<form method="POST" action="/lists/{{ list.id }}/add_item">
-    <input name="item_text" id="id_new_item" placeholder="Enter a to-do item" aria-label=""/>
-    {% csrf_token %}
-</form>
+{% block title %} To-Do lists {% endblock %}
+{% block header_text %} To-Do lists {% endblock %}
 
-<table id="id_list_table">
+{% block form_action %}/lists/{{list.id}}/add_item{% endblock %}
+
+{% block table %}
+<table id="id_list_table" class="table table-striped table-dark table-hover">
     {% for item in list.item_set.all %}
     <tr><td>{{ forloop.counter }}: {{ item.text }}</td></tr>
     {% endfor %}
 </table>
-
-</body>
-</html>
+{% endblock%}
